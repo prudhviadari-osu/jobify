@@ -1,0 +1,16 @@
+# Virtualenv
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Secrets — never commit these
+google_creds.json
+.env
+
+# Generated output
+jobs.csv
+discovered_companies.json
