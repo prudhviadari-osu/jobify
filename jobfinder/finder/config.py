@@ -40,10 +40,31 @@ CLINICAL_HINTS = ["clinical", "patient", "volunteer", "per diem", "evening", "we
 # for each company is verified by `python -m finder.resolve_workday <careers-url>`
 # (prints the three values from a careers URL you paste). Start with 1-2 you've
 # confirmed, then add more.
+#
+# NOTE ON VERIFYING THESE: big medtech firms often use a vanity careers domain
+# (e.g. careers.stryker.com) that redirects to their real Workday URL. The exact
+# tenant/dc/site can only be confirmed by loading the live site, which is why each
+# candidate below is COMMENTED OUT with its likely values. To activate one:
+#   1) open the company's "search jobs" page, copy the *.myworkdayjobs.com URL,
+#   2) run:  python -m finder.resolve_workday <that-url>
+#   3) paste the exact line it prints here and uncomment it.
+# The helper live-tests the endpoint so you know it's right before you rely on it.
+#
 WORKDAY_COMPANIES = [
-    # Example confirmed-structure entries — replace dc/site after resolving:
-    # {"name": "Medtronic", "tenant": "medtronic", "dc": "wd1", "site": "MedtronicCareers"},
-    # {"name": "IQVIA",     "tenant": "iqvia",     "dc": "wd1", "site": "IQVIA"},
+    # --- Medtech / medical-device (verify slug with resolve_workday) ---
+    # {"name": "Medtronic",          "tenant": "medtronic",     "dc": "wd1", "site": "MedtronicCareers"},
+    # {"name": "Stryker",            "tenant": "stryker",       "dc": "wd1", "site": "StrykerCareers"},
+    # {"name": "Boston Scientific",  "tenant": "bostonsci",     "dc": "wd1", "site": "BSC"},
+    # {"name": "Abbott",             "tenant": "abbott",        "dc": "wd5", "site": "abbottcareers"},
+    # {"name": "GE HealthCare",      "tenant": "gehealthcare",  "dc": "wd5", "site": "GEHealthCare"},
+    # {"name": "Edwards Lifesciences","tenant": "edwards",      "dc": "wd1", "site": "edwards"},
+    # {"name": "Baxter",             "tenant": "baxter",        "dc": "wd1", "site": "baxter"},
+    # --- Pharma / CRO / diagnostics (research & clinical-data roles) ---
+    # {"name": "IQVIA",              "tenant": "iqvia",         "dc": "wd1", "site": "IQVIA"},
+    # {"name": "Labcorp",            "tenant": "labcorp",       "dc": "wd1", "site": "External"},
+    # {"name": "Amgen",              "tenant": "amgen",         "dc": "wd1", "site": "Careers"},
+    # {"name": "Regeneron",          "tenant": "regeneron",     "dc": "wd1", "site": "Regeneron-Careers"},
+    # {"name": "Takeda",             "tenant": "takeda",        "dc": "wd3", "site": "takedajobs"},
 ]
 
 # ---------------------------------------------------------------------------
@@ -68,6 +89,10 @@ GOOGLE_WORKSHEET = "Jobs"
 ADZUNA_APP_ID = ""
 ADZUNA_APP_KEY = ""
 ADZUNA_COUNTRY = "us"
+
+# Arbeitnow: a FREE, no-key discovery feed (Europe/tech-leaning supplement).
+# Needs no signup or card. Set False to skip it.
+ENABLE_ARBEITNOW = True
 # Greenhouse/Lever need only a company board slug, no key (added per-company later).
 GREENHOUSE_COMPANIES: list[str] = []
 LEVER_COMPANIES: list[str] = []

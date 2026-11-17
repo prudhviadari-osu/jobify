@@ -15,7 +15,7 @@ getting real jobs.
 2. [How company discovery works](#how-company-discovery-works)
 3. [Setup (step by step)](#setup-step-by-step)
 4. [Running it](#running-it)
-5. [Getting a free Adzuna API key](#getting-a-free-adzuna-api-key)
+5. [Sources & keys](#sources--keys)
 6. [Adding Workday companies](#adding-workday-companies)
 7. [Output: CSV (default) or Google Sheets](#output-csv-default-or-google-sheets)
 8. [Configuration reference](#configuration-reference)
@@ -29,15 +29,22 @@ getting real jobs.
 
 Pulls medtech jobs from:
 
-- **Adzuna** (broad aggregator) — searches many employers for your keywords, and
-  **auto-discovers Workday companies**: any Adzuna result whose apply URL is a
-  `*.myworkdayjobs.com` link gets its company parsed out and saved to
-  `discovered_companies.json`, so the Workday source polls that company's full board
-  on the next run. *(Needs a free Adzuna key — see below.)*
 - **Workday** company career sites, via each company's public JSON endpoint
-  (`/wday/cxs/{tenant}/{site}/jobs`) — this is where the real Workday apply URLs come
-  from. Polls both your seed list **and** the auto-discovered companies.
+  (`/wday/cxs/{tenant}/{site}/jobs`) — **this is the primary, fully-free source** and
+  where the real Workday apply URLs come from. No key, no account. Polls your seed
+  list **and** any auto-discovered companies. The config ships with a medtech starter
+  list you just uncomment + verify.
+- **Arbeitnow** (free discovery feed) — a public, **no-key, no-card** job feed. It's
+  Europe/tech-leaning so it's a *supplement*, not a US-medtech backbone, but it's free
+  and any `*.myworkdayjobs.com` link it surfaces feeds Workday auto-discovery.
+- **Adzuna** (optional) — a broader aggregator, but its free tier is only 25 test
+  calls and full access needs a paid plan, so it's **off by default**. Set a key only
+  if you have one. See below.
 - *(Greenhouse / Lever use the same plugin interface — added in a later phase.)*
+
+> **Fully free with no signup:** leave Adzuna blank, keep Arbeitnow on (default), and
+> add a few Workday companies from the seed list. That's a working medtech finder with
+> zero accounts and zero cost.
 
 Then it:
 - Normalizes every source into one row shape.
@@ -118,22 +125,26 @@ add (it won't error):
 
 ---
 
-## Getting a free Adzuna API key
+## Sources & keys
 
-**Adzuna** is a job-search aggregator with a free developer API. Free tier: ~2,500
-calls/month (250/day), no credit card. For us it's the broad medtech net **and** the
-Workday-company discovery layer.
+### Workday (primary, free, no key)
+Needs nothing but a company list. See [Adding Workday companies](#adding-workday-companies).
+This is the main source — the seed list in `config.py` covers most medtech employers.
 
-1. Go to **https://developer.adzuna.com/** and sign up.
-2. Register an app — you'll get an **App ID** and an **App Key** (two strings).
-3. Open `finder/config.py` and paste them in:
-   ```python
-   ADZUNA_APP_ID  = "your-app-id"
-   ADZUNA_APP_KEY = "your-app-key"
-   ADZUNA_COUNTRY = "us"
-   ```
-4. Run `python -m finder.run`. You'll see Adzuna results in `jobs.csv` and any
-   discovered Workday companies in `discovered_companies.json`.
+### Arbeitnow (free discovery, no key, on by default)
+Runs automatically; nothing to configure. It's a supplement (Europe/tech-leaning),
+there mainly to catch extra Workday companies for free. Turn it off with
+`ENABLE_ARBEITNOW = False` in `config.py` if you don't want it.
+
+### Adzuna (optional, has a paywall — off by default)
+Adzuna's free tier is only **25 test calls**; usable volume needs a paid plan and a
+card. So we don't rely on it. Only set a key if you already have usable access:
+```python
+ADZUNA_APP_ID  = "your-app-id"      # leave blank to skip (default)
+ADZUNA_APP_KEY = "your-app-key"
+ADZUNA_COUNTRY = "us"
+```
+With no key it simply prints a skip notice — not an error.
 
 ---
 
@@ -161,8 +172,12 @@ from the careers URL and live-tests the endpoint.
 Companies auto-discovered via Adzuna are added to `discovered_companies.json`
 automatically — you don't need to do anything for those.
 
-**Medtech starter companies to try:** Medtronic, IQVIA, Labcorp, Amgen, Regeneron,
-Bristol Myers Squibb, Takeda, AstraZeneca, Novartis, Pfizer.
+**Starter list is already in `config.py`** — a set of medtech companies (Medtronic,
+Stryker, Boston Scientific, Abbott, GE HealthCare, Edwards, Baxter, IQVIA, Labcorp,
+Amgen, Regeneron, Takeda) ships commented-out with their likely tenant/dc/site. Big
+firms use vanity career domains (e.g. `careers.stryker.com`) that redirect to Workday,
+so the exact slug must be confirmed once with `resolve_workday` — then uncomment the
+line. The helper live-tests the endpoint so you know the slug is correct.
 
 ---
 
@@ -224,10 +239,12 @@ realistic Adzuna/Workday responses, so no network or keys are needed:
 ```bash
 python tests/test_workday_parsing.py
 python tests/test_adzuna_discovery.py
+python tests/test_arbeitnow.py
 ```
 
 They verify: Workday apply-URL assembly, requisition-id capture, dedup, pagination,
-preference tagging, Adzuna parsing, and Workday company auto-discovery.
+preference tagging, Adzuna + Arbeitnow parsing, keyword filtering, and Workday company
+auto-discovery from both feeds.
 
 ---
 
@@ -246,11 +263,13 @@ jobfinder/
 │   ├── workday_tenant.py   # parse a myworkdayjobs.com URL -> tenant/dc/site
 │   ├── resolve_workday.py  # helper: careers URL -> config line + live test
 │   └── sources/
-│       ├── adzuna.py       # Adzuna search + Workday auto-discovery
-│       └── workday.py      # Workday cxs JSON client
+│       ├── arbeitnow.py    # free no-key discovery feed
+│       ├── adzuna.py       # optional aggregator (off unless key set)
+│       └── workday.py      # Workday cxs JSON client (primary source)
 └── tests/
     ├── test_workday_parsing.py
-    └── test_adzuna_discovery.py
+    ├── test_adzuna_discovery.py
+    └── test_arbeitnow.py
 ```
 
 ---
@@ -261,8 +280,11 @@ jobfinder/
   active or deps aren't installed. Re-run the step 2 commands.
 - **`ModuleNotFoundError: No module named 'finder'`** — run from inside the
   `jobfinder/` folder, and use `python -m finder.run` (not `python finder/run.py`).
-- **Adzuna returns nothing** — check the key is pasted correctly and you haven't hit
-  the daily cap (250/day). Try fewer keywords.
+- **"0 jobs gathered"** — you have no sources active yet. Either uncomment+verify a
+  Workday company in `config.py` (fastest), or leave Arbeitnow on (default) which
+  needs nothing. Adzuna stays off unless you have a paid key.
+- **Arbeitnow returns few/no medtech jobs** — expected; it's Europe/tech-leaning and a
+  supplement only. Your real medtech volume comes from the Workday seed companies.
 - **`resolve_workday` says FAILED** — the site slug is probably slightly off; open the
   careers page and copy the exact path segment after the domain.
 - **Google Sheets: `PermissionError` / 403** — you forgot to share the Sheet with the

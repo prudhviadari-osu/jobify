@@ -17,16 +17,19 @@ from . import config
 from .discovery import all_workday_companies, load_discovered
 from .preferences import annotate
 from .sinks import get_sink
-from .sources import adzuna, workday
+from .sources import adzuna, arbeitnow, workday
 
 
 def gather(keywords: list[str]) -> list:
     jobs = []
 
-    # --- Adzuna first: broad discovery + auto-registers Workday companies ---
+    # --- Free discovery feeds first: they auto-register Workday companies ---
+    if config.ENABLE_ARBEITNOW:
+        jobs += arbeitnow.fetch(keywords, delay=config.REQUEST_DELAY_SECONDS)
+    # Adzuna only runs if a key is set (otherwise it prints a skip notice).
     jobs += adzuna.fetch(keywords, delay=config.REQUEST_DELAY_SECONDS)
 
-    # --- Workday: poll seed companies PLUS any discovered via Adzuna ---
+    # --- Workday: poll seed companies PLUS any auto-discovered companies ---
     companies = all_workday_companies(config.WORKDAY_COMPANIES)
     jobs += workday.fetch(keywords, companies, delay=config.REQUEST_DELAY_SECONDS)
 
