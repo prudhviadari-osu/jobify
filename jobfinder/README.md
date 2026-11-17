@@ -40,7 +40,11 @@ Pulls medtech jobs from:
 - **Adzuna** (optional) — a broader aggregator, but its free tier is only 25 test
   calls and full access needs a paid plan, so it's **off by default**. Set a key only
   if you have one. See below.
-- *(Greenhouse / Lever use the same plugin interface — added in a later phase.)*
+- **Greenhouse** (free, no key) — many health-tech / medical-AI / biotech companies
+  host careers pages here. One call per company returns its whole board. You provide
+  the board slug. Widens coverage into rings 1–2 beyond the big Workday firms.
+- **Lever** (free, no key) — same idea for Lever-hosted boards; paginated. Supports
+  EU-hosted boards too (`"eu": True`).
 
 > **Fully free with no signup:** leave Adzuna blank, keep Arbeitnow on (default), and
 > add a few Workday companies from the seed list. That's a working medtech finder with
@@ -135,6 +139,18 @@ This is the main source — the seed list in `config.py` covers most medtech emp
 Runs automatically; nothing to configure. It's a supplement (Europe/tech-leaning),
 there mainly to catch extra Workday companies for free. Turn it off with
 `ENABLE_ARBEITNOW = False` in `config.py` if you don't want it.
+
+### Greenhouse & Lever (free, no key)
+Per-company, like Workday. Add entries to `GREENHOUSE_COMPANIES` / `LEVER_COMPANIES`
+in `config.py`. The **slug** is the last path segment of the careers URL — often not
+the marketing name:
+- Greenhouse: `boards.greenhouse.io/<slug>` → `{"name": "Tempus", "slug": "tempus", "ring": 2}`
+- Lever: `jobs.lever.co/<slug>` → `{"name": "ExampleBio", "slug": "examplebio", "ring": 2}`
+  (add `"eu": True` for `jobs.eu.lever.co` boards)
+
+The optional `ring` hint (1=core medicine, 2=medical-AI/medtech, 3=adjacent tech)
+feeds Phase 2's fit-finder. Lots of medical-AI/biotech startups use these, so they're
+worth adding to catch ring-1/2 roles the big Workday firms don't have.
 
 ### Adzuna (optional, has a paywall — off by default)
 Adzuna's free tier is only **25 test calls**; usable volume needs a paid plan and a
@@ -240,6 +256,7 @@ realistic Adzuna/Workday responses, so no network or keys are needed:
 python tests/test_workday_parsing.py
 python tests/test_adzuna_discovery.py
 python tests/test_arbeitnow.py
+python tests/test_greenhouse_lever.py
 ```
 
 They verify: Workday apply-URL assembly, requisition-id capture, dedup, pagination,
@@ -265,11 +282,14 @@ jobfinder/
 │   └── sources/
 │       ├── arbeitnow.py    # free no-key discovery feed
 │       ├── adzuna.py       # optional aggregator (off unless key set)
+│       ├── greenhouse.py   # free no-key per-company board
+│       ├── lever.py        # free no-key per-company board
 │       └── workday.py      # Workday cxs JSON client (primary source)
 └── tests/
     ├── test_workday_parsing.py
     ├── test_adzuna_discovery.py
-    └── test_arbeitnow.py
+    ├── test_arbeitnow.py
+    └── test_greenhouse_lever.py
 ```
 
 ---

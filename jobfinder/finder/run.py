@@ -17,23 +17,24 @@ from . import config
 from .discovery import all_workday_companies, load_discovered
 from .preferences import annotate
 from .sinks import get_sink
-from .sources import adzuna, arbeitnow, workday
+from .sources import adzuna, arbeitnow, greenhouse, lever, workday
 
 
 def gather(keywords: list[str]) -> list:
     jobs = []
+    delay = config.REQUEST_DELAY_SECONDS
 
     # --- Free discovery feeds first: they auto-register Workday companies ---
     if config.ENABLE_ARBEITNOW:
-        jobs += arbeitnow.fetch(keywords, delay=config.REQUEST_DELAY_SECONDS)
+        jobs += arbeitnow.fetch(keywords, delay=delay)
     # Adzuna only runs if a key is set (otherwise it prints a skip notice).
-    jobs += adzuna.fetch(keywords, delay=config.REQUEST_DELAY_SECONDS)
+    jobs += adzuna.fetch(keywords, delay=delay)
 
-    # --- Workday: poll seed companies PLUS any auto-discovered companies ---
+    # --- Per-company ATS sources (all free, no key) ---
     companies = all_workday_companies(config.WORKDAY_COMPANIES)
-    jobs += workday.fetch(keywords, companies, delay=config.REQUEST_DELAY_SECONDS)
-
-    # --- Greenhouse / Lever plug in here with the same shape when enabled ---
+    jobs += workday.fetch(keywords, companies, delay=delay)
+    jobs += greenhouse.fetch(keywords, config.GREENHOUSE_COMPANIES, delay=delay)
+    jobs += lever.fetch(keywords, config.LEVER_COMPANIES, delay=delay)
 
     return [annotate(j) for j in jobs]
 

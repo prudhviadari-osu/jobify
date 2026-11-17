@@ -112,9 +112,24 @@ ADZUNA_COUNTRY = "us"
 # Arbeitnow: a FREE, no-key discovery feed (Europe/tech-leaning supplement).
 # Needs no signup or card. Set False to skip it.
 ENABLE_ARBEITNOW = True
-# Greenhouse/Lever need only a company board slug, no key (added per-company later).
-GREENHOUSE_COMPANIES: list[str] = []
-LEVER_COMPANIES: list[str] = []
+# Greenhouse / Lever: free, no-key, per-company. You provide the board slug —
+# the last path segment of the careers URL, which is often NOT the marketing name:
+#   Greenhouse: boards.greenhouse.io/<slug>   -> slug
+#   Lever:      jobs.lever.co/<slug>          -> slug  (add "eu": True for EU boards)
+# Optional "ring" hint (1=core medicine, 2=medical-AI/medtech, 3=adjacent tech)
+# helps Phase 2's fit-finder; it's informational in Phase 1.
+#
+# Many health-tech / medical-AI / biotech startups use Greenhouse or Lever rather
+# than Workday, so these widen coverage into rings 1-2 beyond the big Workday firms.
+GREENHOUSE_COMPANIES: list[dict] = [
+    # {"name": "Tempus",   "slug": "tempus",   "ring": 2},   # medical-AI / precision medicine
+    # {"name": "Benchling","slug": "benchling","ring": 2},   # life-sciences R&D software
+    # {"name": "Verily",   "slug": "verily",   "ring": 2},   # health / medical AI
+]
+LEVER_COMPANIES: list[dict] = [
+    # {"name": "ExampleBio", "slug": "examplebio", "ring": 2},
+    # {"name": "EUHealthco", "slug": "euhealthco", "ring": 2, "eu": True},
+]
 
 # Where auto-discovered Workday companies are saved (blank = default file).
 DISCOVERED_COMPANIES_PATH = ""
