@@ -26,6 +26,16 @@ FIELDNAMES = [
     "status",
     "relevance_score",
     "relevance_reason",
+    # --- Phase 2: ring-aware fit-finder fields (blank until scored) ---
+    "ring",
+    "fit_score",
+    "path_score",
+    "rank",
+    "fit_verdict",
+    "positioning_advice",
+    "gaps",
+    "next_action",
+    "off_path_note",
 ]
 
 
@@ -42,8 +52,32 @@ class NormalizedJob:
     posted_at: str = ""
     found_at: str = field(default_factory=lambda: datetime.now(timezone.utc).date().isoformat())
     status: str = "new"
-    relevance_score: str = ""   # filled in Phase 2
-    relevance_reason: str = ""  # filled in Phase 2
+    relevance_score: str = ""
+    relevance_reason: str = ""
+    # --- Phase 2: ring-aware fit-finder (blank until scored) ---
+    ring: str = ""
+    fit_score: str = ""
+    path_score: str = ""
+    rank: str = ""
+    fit_verdict: str = ""
+    positioning_advice: str = ""
+    gaps: str = ""
+    next_action: str = ""
+    off_path_note: str = ""
+
+    def apply_score(self, result: dict) -> "NormalizedJob":
+        """Copy a scorer result (scorer._sanitize output) onto this job."""
+        self.ring = str(result.get("ring", ""))
+        self.fit_score = str(result.get("fit_score", ""))
+        self.path_score = str(result.get("path_score", ""))
+        self.rank = str(result.get("rank", ""))
+        self.fit_verdict = str(result.get("fit_verdict", ""))
+        self.positioning_advice = str(result.get("positioning_advice", ""))
+        self.gaps = str(result.get("gaps", ""))
+        self.next_action = str(result.get("next_action", ""))
+        self.off_path_note = str(result.get("off_path_note", ""))
+        self.status = "scored"
+        return self
 
     @property
     def job_key(self) -> str:

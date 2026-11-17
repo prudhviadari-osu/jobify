@@ -7,9 +7,10 @@ __pycache__/
 *.pyc
 *.egg-info/
 
-# Secrets — never commit these
+# Secrets / personal data — never commit these
 google_creds.json
 .env
+finder/profile.json
 
 # Generated output
 jobs.csv

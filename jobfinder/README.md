@@ -116,7 +116,24 @@ With the virtualenv active:
 python -m finder.run                       # uses KEYWORDS from config, writes jobs.csv
 python -m finder.run --keywords imaging ml # override keywords for this run only
 python -m finder.run --sink sheets         # write to your Google Sheet instead of CSV
+python -m finder.run --expand              # model-expands your keywords (you prune)
+python -m finder.run --score               # rank jobs by medicine-first fit (Phase 2)
 ```
+
+### Phase 2: scoring + the advisor (needs the local model)
+With `--score`, each job is ranked by the **priority rings** (medicine first). It
+needs a local model via Ollama (free, offline):
+1. Install Ollama: https://ollama.com/download
+2. `ollama pull qwen3:8b`   (or `phi4-mini` for low-RAM machines)
+3. `python -m finder.run --score`
+
+Each job gets a `ring` (1 core-medicine / 2 medical-AI / 3 adjacent-tech / 4 off-path),
+a `fit_score` × `path_score` rank, an advisor verdict, positioning advice, gaps, and a
+suggested next action. Ring-3 jobs are shown but labeled "off-path: no clinical hours
+or medical exposure." The CSV/Sheet is sorted best-fit first.
+
+No model installed yet? Set `LLM_BACKEND = "fake"` in `config.py` for a deterministic
+dry run (keyword-based stub, no language understanding — just to see the flow).
 
 Open `jobs.csv` to see results. Re-running is safe — only new jobs are appended.
 
@@ -257,6 +274,7 @@ python tests/test_workday_parsing.py
 python tests/test_adzuna_discovery.py
 python tests/test_arbeitnow.py
 python tests/test_greenhouse_lever.py
+python tests/test_phase2_scoring.py
 ```
 
 They verify: Workday apply-URL assembly, requisition-id capture, dedup, pagination,
@@ -279,6 +297,13 @@ jobfinder/
 │   ├── discovery.py        # registry of auto-discovered Workday companies
 │   ├── workday_tenant.py   # parse a myworkdayjobs.com URL -> tenant/dc/site
 │   ├── resolve_workday.py  # helper: careers URL -> config line + live test
+│   ├── profile.example.json# profile template (copy to profile.json, edit)
+│   ├── scorer.py           # Phase 2: ring-aware fit/path scoring + advisor
+│   ├── expand.py           # Phase 2: model keyword expansion (+ prune)
+│   ├── llm/                # swappable model backend
+│   │   ├── base.py         #   interface + JSON extraction
+│   │   ├── ollama_client.py#   local Ollama backend (default)
+│   │   └── fake_client.py  #   deterministic offline stub for tests/dry runs
 │   └── sources/
 │       ├── arbeitnow.py    # free no-key discovery feed
 │       ├── adzuna.py       # optional aggregator (off unless key set)
@@ -289,7 +314,8 @@ jobfinder/
     ├── test_workday_parsing.py
     ├── test_adzuna_discovery.py
     ├── test_arbeitnow.py
-    └── test_greenhouse_lever.py
+    ├── test_greenhouse_lever.py
+    └── test_phase2_scoring.py
 ```
 
 ---

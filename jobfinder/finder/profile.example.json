@@ -1,0 +1,127 @@
+{
+  "basics": {
+    "first_name": "Your",
+    "last_name": "Name",
+    "email": "you@example.com",
+    "phone": "(000) 000-0000",
+    "location": {
+      "city": "Columbus",
+      "state": "OH",
+      "country": "USA"
+    },
+    "links": {
+      "linkedin": "",
+      "github": "",
+      "portfolio": ""
+    },
+    "work_authorization": "US Permanent Resident",
+    "requires_sponsorship": false
+  },
+  "summary": "OSU Computer Science & Engineering honors student on a pre-medical track with hands-on biomedical research and applied ML experience spanning medical imaging, organ-assessment pipelines, and injury biomechanics.",
+  "experience": [
+    {
+      "company": "Injury Biomedical Research Center (IBRC)",
+      "title": "Undergraduate Research Assistant",
+      "start": "2026-09",
+      "end": "present",
+      "location": "Columbus, OH",
+      "bullets": [
+        "Trained in BSL-2 protocols, DXA/CT imaging workflows, scalpel technique, and PMHS handling for injury biomechanics research.",
+        "Developing a MATLAB-usable simulation and visualization tool integrating the MS-Human-700 model, MuJoCo physics simulation, and Vicon motion-capture data."
+      ]
+    },
+    {
+      "company": "The Breathing Association",
+      "title": "Clinical Volunteer",
+      "start": "2026-07",
+      "end": "present",
+      "location": "Columbus, OH",
+      "bullets": [
+        "Accumulated ~100 hours supporting patient intake, working under and reporting to the attending physician.",
+        "Developing a patient-facing clinic website and exploring athenahealth integration."
+      ]
+    },
+    {
+      "company": "The Ohio State University (COE-SURE)",
+      "title": "Summer Research Fellow",
+      "start": "2026-05",
+      "end": "2026-08",
+      "location": "Columbus, OH",
+      "bullets": [
+        "Extended a BioHack prototype into an AI-assisted pipeline for donor-kidney assessment during normothermic machine perfusion.",
+        "Built a calibrated XGBoost donor-risk classifier (>95.5% precision); built real-time organ-monitoring alerts; presented at the COE-SURE Research Symposium."
+      ]
+    },
+    {
+      "company": "James Cancer Center",
+      "title": "Research Collaborator (Dr. Simeng Zhu)",
+      "start": "2026-02",
+      "end": "2026-05",
+      "location": "Columbus, OH",
+      "bullets": [
+        "Developed ML models to identify and outline brain tumors on MRI for the MICCAI BraTS Challenge using Ohio Supercomputer Center resources."
+      ]
+    },
+    {
+      "company": "Handshake AI Fellowship",
+      "title": "Multimedia Analyst",
+      "start": "2025-11",
+      "end": "present",
+      "location": "Remote",
+      "bullets": [
+        "Annotated image, video, and audio datasets; refined labeling guidelines and QA protocols for high-precision data."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "Ohio State University",
+      "degree": "BS",
+      "field": "Computer Science and Engineering (University Honors; Pre-Medical Track)",
+      "end": "2029-06",
+      "gpa": "3.85"
+    }
+  ],
+  "skills": {
+    "programming": [
+      "Python (OpenEDG certified)",
+      "Java",
+      "MATLAB",
+      "Git/GitHub"
+    ],
+    "biomedical_research": [
+      "DXA/CT imaging",
+      "Osiris",
+      "BSL-2 protocols",
+      "PMHS handling",
+      "scalpel technique",
+      "Materialise Mimics"
+    ],
+    "machine_learning": [
+      "NumPy",
+      "Pandas",
+      "Scikit-learn",
+      "XGBoost",
+      "PyTorch",
+      "TensorFlow"
+    ]
+  },
+  "eeo": {
+    "gender": "Male",
+    "veteran": "Not a protected veteran",
+    "disability": "No",
+    "race": ""
+  },
+  "preferences": {
+    "target": "Summer 2027 internships; also open to night/weekend clinical roles year-round (for clinical hours)",
+    "locations": {
+      "primary": [
+        "Columbus, OH",
+        "Remote"
+      ],
+      "relocate": "summer internships only"
+    },
+    "salary_expectation": ""
+  },
+  "resume_pdf_path": "/path/to/your_resume.pdf"
+}

@@ -134,5 +134,15 @@ LEVER_COMPANIES: list[dict] = [
 # Where auto-discovered Workday companies are saved (blank = default file).
 DISCOVERED_COMPANIES_PATH = ""
 
+# ---------------------------------------------------------------------------
+# Phase 2 — local model (scoring, advisor, keyword expansion). All free/local.
+# ---------------------------------------------------------------------------
+# Backend: "ollama" (real local model) or "fake" (offline stub for a dry run).
+LLM_BACKEND = "ollama"
+OLLAMA_HOST = "http://localhost:11434"
+OLLAMA_MODEL = "qwen3:8b"          # low-RAM alternative: "phi4-mini"
+# If the model is unreachable, skip scored jobs ("skip") or stop ("raise").
+LLM_ON_ERROR = "skip"
+
 # Politeness: seconds to sleep between HTTP calls.
 REQUEST_DELAY_SECONDS = 0.5

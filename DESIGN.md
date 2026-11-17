@@ -5,9 +5,10 @@ and pre-builds a reviewable "application draft" for each one — adapting your r
 text to the role with a local LLM — so applying to Workday jobs becomes: **get a
 notification → approve a draft like a PR → do the final submit yourself.**
 
-Status: **Phase 1 built** (job finder → CSV/Sheet; Workday client working & tested).
-Phases 2–4 pending. Candidate: Prudhvi Adari — OSU CS + pre-med, biomedical
-research & ML; target = medtech.
+Status: **Phases 1–2 built.** Phase 1 = finder (Workday + Greenhouse + Lever +
+Arbeitnow) → CSV/Sheet. Phase 2 = local-model ring-aware fit scorer + advisor +
+keyword expansion (Ollama/Qwen3, swappable, offline-tested). Phases 3–4 pending.
+Candidate: Prudhvi Adari — OSU CS + pre-med, biomedical research & ML.
 
 ---
 
