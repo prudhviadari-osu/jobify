@@ -131,6 +131,8 @@ you review by editing cells.
 | `job_key` | links back to `Jobs` |
 | `company` / `title` / `url` | quick context |
 | `relevance_score` / `relevance_reason` | why it's here |
+| `ring` | priority ring 1–4 (§6.7): core-medicine / medical-AI / adjacent-tech / off-path |
+| `fit_score` / `path_score` | can-he-do-it × does-it-serve-medicine (§6.7) |
 | `fit_verdict` | advisor's verdict + reason (§6.6) |
 | `role_mode` | "summer internship" / "night-weekend clinical" |
 | `positioning_advice` | what to emphasize for this role |
@@ -372,6 +374,43 @@ as a smart friend's quick take for triage, not a career coach's final word. If y
 want sharper advice, the advisor sits behind the same swappable `Adapter` interface, so
 a stronger model could be slotted in later (that's the only place a paid model might
 ever be worth it — your choice, never required).
+
+---
+
+## 6.7 The fit model: priority rings (why a job is surfaced)
+
+The tool should find roles the candidate is a good fit for **even if he didn't search
+for them** — but with a sense of priority that mirrors his actual goal. Prudhvi is
+**pre-med: medicine is the path, technical roles are welcome when they serve it.** So
+every job is scored on *two* axes and ranked by both:
+
+- **fit score** — can he do this job? (skills/experience match)
+- **path score** — does this advance a pre-med headed toward medicine (with ML as a tool)?
+
+Ranking uses `fit × path`, so a medical-AI role with medium skill-match outranks a
+perfect-match non-medical ML job. Jobs are tagged with a **priority ring**:
+
+| Ring | What | How it's treated |
+|---|---|---|
+| **1 — Core medicine / clinical** | clinical roles, research assistant, patient exposure, hospital/health-system, anything giving clinical hours | Highest priority. Night/weekend clinical roles (role-mode §5) live here. |
+| **2 — Medical AI / medtech / biomedical** | medical imaging AI, clinical-data science, medical-device R&D, bioinformatics, health-tech | **Equal top priority** — ML skills *and* medical direction both apply. |
+| **3 — Adjacent technical (off-path)** | general ML / data science / research engineering with no medical angle | **Surfaced but deprioritized** — shown lower, clearly labeled "off-path: no clinical hours / medical exposure." Visible, never crowds out rings 1–2. |
+| **4 — Off-path non-technical** | unrelated SWE/sales/etc. | Filtered out / buried. |
+
+**Decision: boundary = option A** — lead with medicine, keep medical-AI/medtech equal,
+let genuinely good pure-tech roles appear but stay in their lane. The advisor labels
+every ring-3 job with an honest "this won't give you clinical hours or medical
+exposure" note so nothing misleads him toward off-goal applications.
+
+### What this changes in the build (Phase 2)
+1. **Profile-driven keyword expansion (§6.5)** is tuned to the rings: medicine +
+   medical-AI heavy, general-technical as a secondary layer the user can prune.
+2. **Company sourcing widens beyond medtech**: health systems + medtech + medical-AI
+   companies first (rings 1–2), select tech/research orgs second (ring 3). Each company
+   in the config carries a ring hint.
+3. **The advisor becomes a ring-aware fit-finder**: it assigns ring + fit + path, and
+   the surprising-but-good matches float up *with a reason* ("Ring 2 — not what you
+   searched, but your BraTS/MRI work is exactly this imaging-AI role").
 
 ---
 

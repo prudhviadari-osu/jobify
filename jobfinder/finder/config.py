@@ -1,21 +1,40 @@
 """Everything you tune lives here. No code changes needed to adjust the search.
 
-Values are pre-filled for Prudhvi's medtech search (DESIGN.md). Edit freely.
+Values are pre-filled for Prudhvi's search (DESIGN.md). Goal: medicine is the path,
+medical-AI/medtech is equal priority, general-technical roles are welcome but
+deprioritized (the "priority rings" in DESIGN.md §6.7). Edit freely.
 """
 
 # ---------------------------------------------------------------------------
-# What to search for
+# What to search for  (DESIGN.md §6.5 / §6.7 — grouped by priority ring)
 # ---------------------------------------------------------------------------
-# Seed keywords. In Phase 1 these are used directly; in Phase 2 the local model
-# can expand them (interactive search, DESIGN.md §6.5).
-KEYWORDS = [
+# Phase 1 uses these directly; Phase 2 lets the local model expand them per ring.
+# Ring 1 — core medicine / clinical (highest priority)
+KEYWORDS_CORE_MEDICINE = [
+    "clinical research",
+    "research assistant",
+    "clinical",
+    "patient care",
+    "medical scribe",
+]
+# Ring 2 — medical AI / medtech / biomedical (equal top priority)
+KEYWORDS_MEDICAL_AI = [
     "biomedical",
     "medical imaging",
-    "machine learning",
     "clinical data",
-    "research",
     "bioinformatics",
+    "medical device",
+    "healthcare machine learning",
 ]
+# Ring 3 — adjacent technical, off-path (surfaced but deprioritized)
+KEYWORDS_ADJACENT_TECH = [
+    "machine learning",
+    "data science",
+    "research software",
+    "computer vision",
+]
+# The flat list the finder searches (all rings). Prune/extend freely.
+KEYWORDS = KEYWORDS_CORE_MEDICINE + KEYWORDS_MEDICAL_AI + KEYWORDS_ADJACENT_TECH
 
 # ---------------------------------------------------------------------------
 # Location / role preferences (DESIGN.md §5)
