@@ -70,8 +70,12 @@ CLINICAL_HINTS = ["clinical", "patient", "volunteer", "per diem", "evening", "we
 # The helper live-tests the endpoint so you know it's right before you rely on it.
 #
 WORKDAY_COMPANIES = [
-    # --- Medtech / medical-device (verify slug with resolve_workday) ---
-    # {"name": "Medtronic",          "tenant": "medtronic",     "dc": "wd1", "site": "MedtronicCareers"},
+    # --- ACTIVE: Medtronic's Workday host is verified (medtronic.wd1.myworkdayjobs.com).
+    # If the `site` slug ever 404s, run resolve_workday on the live careers URL and fix it.
+    {"name": "Medtronic", "tenant": "medtronic", "dc": "wd1", "site": "MedtronicCareers"},
+    # --- Below are UNVERIFIED candidates (vanity domains that redirect to Workday).
+    # Confirm each with:  python -m finder.resolve_workday <the *.myworkdayjobs.com URL>
+    # then uncomment the exact line it prints.
     # {"name": "Stryker",            "tenant": "stryker",       "dc": "wd1", "site": "StrykerCareers"},
     # {"name": "Boston Scientific",  "tenant": "bostonsci",     "dc": "wd1", "site": "BSC"},
     # {"name": "Abbott",             "tenant": "abbott",        "dc": "wd5", "site": "abbottcareers"},
