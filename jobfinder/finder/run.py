@@ -107,6 +107,8 @@ def main() -> None:
                         help="score + rank jobs with the local model (Phase 2)")
     parser.add_argument("--no-prune", action="store_true",
                         help="with --expand, skip the interactive prune step")
+    parser.add_argument("--all", action="store_true",
+                        help="write ALL jobs incl. filtered ones (default: only US + student-level)")
     args = parser.parse_args()
 
     profile = load_profile()
@@ -119,9 +121,19 @@ def main() -> None:
           f"{len(load_discovered())} auto-discovered")
 
     jobs = gather(keywords)
-    kept = [j for j in jobs if j.status != "location_filtered"]
-    filtered = len(jobs) - len(kept)
-    print(f"\nGathered {len(jobs)} jobs ({filtered} outside your location rules, kept but tagged).")
+    # Show the funnel: how many survived each filter.
+    from collections import Counter
+    status_counts = Counter(j.status for j in jobs)
+    kept = [j for j in jobs if j.status == "new"]
+    print(f"\nGathered {len(jobs)} jobs → {len(kept)} match your filters (US + student-level).")
+    dropped = {
+        "non_us": "outside US",
+        "not_student_level": "senior-level",
+        "location_filtered": "location rules",
+    }
+    for status, label in dropped.items():
+        if status_counts.get(status):
+            print(f"   dropped {status_counts[status]} ({label})")
 
     if args.score:
         jobs = maybe_score(jobs, profile)
@@ -131,9 +143,13 @@ def main() -> None:
             for j in top:
                 print(f"  [ring {j.ring} | rank {j.rank}] {j.title} @ {j.company}")
 
-    added, skipped = get_sink(args.sink)(jobs)
+    # By default, write only jobs that passed the filters (clean output). Pass
+    # --all to include filtered/dropped jobs (tagged) for inspection.
+    to_write = jobs if args.all else kept
+    added, skipped = get_sink(args.sink)(to_write)
     where = config.CSV_PATH if args.sink == "csv" else f"Google Sheet ({config.GOOGLE_WORKSHEET})"
-    print(f"\nWrote to {where}: {added} new, {skipped} already present.")
+    print(f"\nWrote to {where}: {added} new, {skipped} already present"
+          + ("" if args.all else " (filtered to US + student-level; use --all to include the rest)."))
     if args.sink == "csv" and added:
         print(f"Open {config.CSV_PATH} to see them (sorted by fit when --score is used).")
 

@@ -53,8 +53,12 @@ Pulls medtech jobs from:
 Then it:
 - Normalizes every source into one row shape.
 - Dedupes on a stable `job_key` so re-runs only add genuinely new jobs.
-- Applies your location/role preferences (Columbus + Remote always; other locations
-  only for summer internships; night/weekend clinical tagged separately).
+- **Filters to US + student-level by default** (`US_ONLY`, `STUDENT_LEVEL_ONLY` in
+  config): drops roles outside the United States and senior/director/experienced
+  roles, keeping internships, co-ops, new-grad, entry, and research-assistant-level
+  jobs. Columbus/Remote/Ohio always pass; any US city passes for student-level roles.
+  Night/weekend clinical roles are tagged. Dropped jobs are tagged with the reason
+  (not deleted); run with `--all` to include them, or flip the toggles in config.
 - Writes to `jobs.csv` (default) or a Google Sheet.
 
 ## How company discovery works

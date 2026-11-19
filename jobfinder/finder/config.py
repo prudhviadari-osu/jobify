@@ -48,6 +48,41 @@ INTERNSHIP_HINTS = ["intern", "internship", "summer", "co-op", "coop"]
 # Words that mark a night/weekend clinical role (acceptable year-round, any OH/remote loc).
 CLINICAL_HINTS = ["clinical", "patient", "volunteer", "per diem", "evening", "weekend", "night"]
 
+# --- US-only filter: drop jobs clearly outside the United States ---
+US_ONLY = True
+# Location text containing any of these is treated as US (plus the 50 state codes below).
+US_LOCATION_HINTS = [
+    "united states", "u.s.", "usa", " us ", "us-", "-us", "remote - us",
+    "columbus", "ohio", "remote",
+]
+US_STATE_CODES = [
+    "al","ak","az","ar","ca","co","ct","de","fl","ga","hi","id","il","in","ia","ks",
+    "ky","la","me","md","ma","mi","mn","ms","mo","mt","ne","nv","nh","nj","nm","ny",
+    "nc","nd","oh","ok","or","pa","ri","sc","sd","tn","tx","ut","vt","va","wa","wv",
+    "wi","wy","dc",
+]
+# Clear non-US signals — if present (and no US signal), the job is dropped.
+NON_US_HINTS = [
+    "ireland","india","china","germany","france","japan","singapore","canada","mexico",
+    "united kingdom","uk","brazil","switzerland","netherlands","israel","australia",
+    "spain","italy","poland","korea","philippines","costa rica","dominican",
+]
+
+# --- Student-level filter: keep intern/entry/new-grad; drop senior roles ---
+STUDENT_LEVEL_ONLY = True
+# Title signals of a student / early-career role (keep these).
+STUDENT_LEVEL_HINTS = [
+    "intern", "internship", "co-op", "coop", "new grad", "new graduate", "graduate",
+    "entry level", "entry-level", "associate", "trainee", "apprentice", "student",
+    "early career", "fellow", "i ",
+]
+# Title signals of a senior / experienced role (drop these, even if other hints match).
+SENIOR_LEVEL_HINTS = [
+    "senior", "sr.", "sr ", "staff", "principal", "lead", "manager", "director",
+    "head of", "vp", "vice president", "chief", "iii", "iv", " v ", "architect",
+    "expert", "specialist ii", "ii ", "experienced",
+]
+
 # ---------------------------------------------------------------------------
 # Workday seed companies (DESIGN.md §8)
 # ---------------------------------------------------------------------------
