@@ -151,6 +151,13 @@ ADZUNA_COUNTRY = "us"
 # Arbeitnow: a FREE, no-key discovery feed (Europe/tech-leaning supplement).
 # Needs no signup or card. Set False to skip it.
 ENABLE_ARBEITNOW = True
+
+# LangSearch: free web-search API used ONLY to DISCOVER Workday companies (not a
+# job feed). It finds career-page URLs the per-company APIs then search directly.
+# Free key: https://langsearch.com/dashboard . Blank = discovery skipped.
+# Only your search keywords leave the machine (no profile/resume data).
+LANGSEARCH_API_KEY = ""
+ENABLE_LANGSEARCH_DISCOVERY = True
 # Greenhouse / Lever: free, no-key, per-company. You provide the board slug —
 # the last path segment of the careers URL, which is often NOT the marketing name:
 #   Greenhouse: boards.greenhouse.io/<slug>   -> slug

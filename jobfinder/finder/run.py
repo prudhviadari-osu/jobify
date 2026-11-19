@@ -30,13 +30,18 @@ def gather(keywords: list[str]) -> list:
     jobs = []
     delay = config.REQUEST_DELAY_SECONDS
 
-    # --- Free discovery feeds first: they auto-register Workday companies ---
+    # --- Company discovery FIRST (so newly-found companies get searched below) ---
+    if getattr(config, "ENABLE_LANGSEARCH_DISCOVERY", False):
+        from .sources import langsearch_discovery
+        langsearch_discovery.discover(keywords, delay=delay)
+
+    # --- Free discovery feeds: they also auto-register Workday companies ---
     if config.ENABLE_ARBEITNOW:
         jobs += arbeitnow.fetch(keywords, delay=delay)
     # Adzuna only runs if a key is set (otherwise it prints a skip notice).
     jobs += adzuna.fetch(keywords, delay=delay)
 
-    # --- Per-company ATS sources (all free, no key) ---
+    # --- Per-company ATS sources (all free, no key) — now incl. discovered ones ---
     companies = all_workday_companies(config.WORKDAY_COMPANIES)
     jobs += workday.fetch(keywords, companies, delay=delay)
     jobs += greenhouse.fetch(keywords, config.GREENHOUSE_COMPANIES, delay=delay)

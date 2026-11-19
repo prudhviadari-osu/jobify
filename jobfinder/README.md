@@ -64,12 +64,17 @@ Then it:
 ## How company discovery works
 
 There is **no global directory of Workday companies** — each company hosts its own
-Workday site. We find them two ways:
+Workday site. We find them three ways:
 
 1. **Seed list** — companies you name in `WORKDAY_COMPANIES` (`finder/config.py`).
-2. **Auto-discovery** — Adzuna surfaces medtech jobs across many employers; the ones
-   hosted on Workday expose their careers URL, which we parse and register
-   automatically into `discovered_companies.json`.
+2. **LangSearch web-search discovery** — a free web-search API searches for career
+   pages scoped to `myworkdayjobs.com` matching your keywords and auto-registers the
+   companies it finds (the automated version of googling `site:myworkdayjobs.com`).
+   Set `LANGSEARCH_API_KEY` (free: https://langsearch.com/dashboard). Only your search
+   keywords leave the machine — not your profile. It finds companies; the per-company
+   APIs remain the real job feed (web snippets aren't clean job data).
+3. **Aggregator auto-discovery** — Arbeitnow/Adzuna results linking to Workday reveal
+   companies too, registered into `discovered_companies.json`.
 
 So searching gradually grows the Workday company list by itself.
 

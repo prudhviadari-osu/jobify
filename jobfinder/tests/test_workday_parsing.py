@@ -82,16 +82,15 @@ def test_preferences():
     intern = by_title["Biomedical Engineering Intern - Summer 2027"]
     clinical = by_title["Clinical Data Scientist"]
 
-    # Minneapolis is a non-primary location, but it's an internship -> allowed
+    # Minneapolis is a non-primary location, but it's a US internship -> passes.
     assert "mode=summer internship" in intern.relevance_reason
-    assert "location_ok=True" in intern.relevance_reason, intern.relevance_reason
-    assert intern.status == "new"
+    assert intern.status == "new", intern.relevance_reason   # passed all filters
 
-    # Remote clinical role -> remote detected, allowed, tagged clinical
+    # Remote clinical role -> remote detected, US, passes, tagged clinical.
     assert clinical.remote is True
     assert "mode=night/weekend clinical" in clinical.relevance_reason
-    assert "location_ok=True" in clinical.relevance_reason
-    print("  preference tagging: OK")
+    assert clinical.status == "new"
+    print("  preference tagging (US + student-level filters): OK")
 
 
 if __name__ == "__main__":
