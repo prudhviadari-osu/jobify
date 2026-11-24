@@ -51,9 +51,11 @@ CLINICAL_HINTS = ["clinical", "patient", "volunteer", "per diem", "evening", "we
 # --- US-only filter: drop jobs clearly outside the United States ---
 US_ONLY = True
 # Location text containing any of these is treated as US (plus the 50 state codes below).
+# Positive US signals. NOTE: "remote" is deliberately NOT here — remote isn't
+# inherently US ("Remote - EMEA" exists); bare remote is handled separately.
 US_LOCATION_HINTS = [
     "united states", "u.s.", "usa", " us ", "us-", "-us", "remote - us",
-    "columbus", "ohio", "remote",
+    "remote, us", "remote us", "columbus", "ohio",
 ]
 US_STATE_CODES = [
     "al","ak","az","ar","ca","co","ct","de","fl","ga","hi","id","il","in","ia","ks",
@@ -61,12 +63,25 @@ US_STATE_CODES = [
     "nc","nd","oh","ok","or","pa","ri","sc","sd","tn","tx","ut","vt","va","wa","wv",
     "wi","wy","dc",
 ]
+# Full state names (lowercase) — Workday often shows "Minnesota" not "MN".
+US_STATE_NAMES = [
+    "alabama","alaska","arizona","arkansas","california","colorado","connecticut",
+    "delaware","florida","georgia","hawaii","idaho","illinois","indiana","iowa",
+    "kansas","kentucky","louisiana","maine","maryland","massachusetts","michigan",
+    "minnesota","mississippi","missouri","montana","nebraska","nevada",
+    "new hampshire","new jersey","new mexico","new york","north carolina",
+    "north dakota","ohio","oklahoma","oregon","pennsylvania","rhode island",
+    "south carolina","south dakota","tennessee","texas","utah","vermont","virginia",
+    "washington","west virginia","wisconsin","wyoming",
+]
 # Clear non-US signals — if present (and no US signal), the job is dropped.
 NON_US_HINTS = [
     "ireland","india","china","germany","france","japan","singapore","canada","mexico",
     "united kingdom","uk","brazil","switzerland","netherlands","israel","australia",
     "spain","italy","poland","korea","philippines","costa rica","dominican",
 ]
+# Non-US REGION markers (not countries) that still mean "not US".
+NON_US_REGIONS = ["emea", "apac", "latam", "europe", "asia", "international", "global"]
 
 # --- Student-level filter: keep intern/entry/new-grad; drop senior roles ---
 STUDENT_LEVEL_ONLY = True

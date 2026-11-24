@@ -38,21 +38,47 @@ def is_clinical(job: NormalizedJob) -> bool:
 
 # --- US-only ---
 def is_us(job: NormalizedJob) -> bool:
+    """US-FIRST policy: require a POSITIVE US signal to keep a job. For someone who
+    needs the US specifically, 'prove it's US or it's out' beats 'keep unless I
+    recognize a foreign country' — the latter let every unlisted foreign city through
+    (Toronto, Bengaluru, etc.), flooding the DB with international roles.
+
+    A job counts as US if ANY of:
+      - location text names the US (United States / USA / US),
+      - it contains a US state code ("Columbus, OH") or full state name,
+      - it's remote AND not tied to a foreign country,
+      - the location is genuinely unknown/empty (can't tell — don't force-drop,
+        but these are rare and you can still see them tagged).
+    Otherwise it's treated as non-US and dropped.
+    """
     loc = _loc(job)
-    if not loc:
-        return True   # unknown location — don't drop, let the human judge
-    if job.remote:
+
+    # Explicit US mention wins.
+    if any(h in loc for h in config.US_LOCATION_HINTS):
         return True
-    # Explicit non-US signal with no US signal -> not US.
-    has_non_us = any(h in loc for h in config.NON_US_HINTS)
-    has_us = any(h in loc for h in config.US_LOCATION_HINTS)
-    if has_us:
-        return True
-    # State-code match, e.g. "Minneapolis, MN" or "Austin, TX".
-    tokens = [t.strip(" ,()-") for t in loc.replace("/", " ").split()]
+    # US state code or full state name.
+    tokens = [t.strip(" ,().-") for t in loc.replace("/", " ").replace(",", " ").split()]
     if any(tok in config.US_STATE_CODES for tok in tokens):
         return True
-    return not has_non_us  # if it names a foreign country, drop; otherwise keep
+    if any(state in loc for state in config.US_STATE_NAMES):
+        return True
+
+    # Explicit foreign country OR non-US region named -> definitely not US.
+    if any(h in loc for h in config.NON_US_HINTS):
+        return False
+    if any(r in loc for r in config.NON_US_REGIONS):
+        return False
+
+    # "Remote" with no location detail at all -> allow (likely US-remote).
+    # But "Remote - <somewhere>" with a somewhere we didn't recognize as US is
+    # suspect, so only bare/standalone remote passes here.
+    stripped = loc.replace("remote", "").strip(" -–—,/")
+    if ("remote" in loc) and stripped == "":
+        return True
+
+    # Truly unknown/empty location -> keep (rare). A named place with no US signal
+    # is treated as NON-US and dropped (the US-first bias you need).
+    return loc.strip() == ""
 
 
 # --- Student / early-career level ---
