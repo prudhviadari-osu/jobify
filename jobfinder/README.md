@@ -1,8 +1,21 @@
-# Job Finder — Phase 1
+# jobify — the job-domain skill
 
-The first slice of the Job Application Assistant (full plan in [`../DESIGN.md`](../DESIGN.md)):
-it finds medtech jobs — including the ones behind Workday career sites — and
-collects them, deduped, into a CSV or your Google Sheet.
+jobify is the **jobs skill** in the Aegis system (see the system map in
+[aegis/docs/SYSTEM_DESIGN.md](https://github.com/prudhviadari-osu/aegis/blob/main/docs/SYSTEM_DESIGN.md)).
+It finds jobs — including the ones behind Workday career sites — filters, ranks, and
+(coming next) prepares applications. It owns **all job-specific logic**; Aegis just
+runs it as a skill and provides the model + dashboard.
+
+**Two ways to use it:**
+- **Standalone** — run it directly as a CLI/library (this README). Writes to CSV or a
+  Google Sheet.
+- **As an Aegis skill** — Aegis imports jobify (via `AEGIS_JOBIFY_PATH`), runs searches
+  as tasks, analyzes with the local model, and shows ranked results on its `/jobs`
+  page. jobify stays independently usable either way.
+
+For application **prep** (reading a found job's requirements page + drafting), jobify
+will call **aegis-browser** — the shared headless browser wrapper — not a browser of
+its own. Job logic stays here; browser-driving lives there.
 
 It is **runnable with zero setup**: with no API keys at all it runs cleanly and
 tells you what to add. Add a free Adzuna key and/or a Workday company to start
